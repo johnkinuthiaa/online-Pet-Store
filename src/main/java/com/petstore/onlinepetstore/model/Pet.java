@@ -22,6 +22,7 @@ public class Pet {
         this.category=category;
         this.breed=breed;
         this.description=description;
+        this.price=price;
     }
     public void setPetId(Long petId){
         this.petId=petId;
@@ -58,5 +59,11 @@ public class Pet {
     }
     public String getDescription(){
         return description;
+    }
+    public void setPrice(Double price){
+        this.price=price;
+    }
+    public Double getPrice(){
+        return price;
     }
 }
