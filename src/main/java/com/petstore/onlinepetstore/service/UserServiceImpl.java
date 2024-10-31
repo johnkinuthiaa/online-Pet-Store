@@ -9,14 +9,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImp implements UserService{
+public class UserServiceImpl implements UserService{
     private final UserRepository repository;
     private final BCryptPasswordEncoder passwordEncoder =new BCryptPasswordEncoder(12);
     AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
-    public UserServiceImp(UserRepository repository, AuthenticationManager authenticationManager){
+    public UserServiceImpl(UserRepository repository, AuthenticationManager authenticationManager, JwtUtils jwtUtils){
         this.repository=repository;
         this.authenticationManager=authenticationManager;
+        this.jwtUtils = jwtUtils;
     }
     @Override
     public User register(User user) {
@@ -31,7 +33,7 @@ public class UserServiceImp implements UserService{
                 user.getPassword()
         ));
         if(authentication.isAuthenticated()){
-            return "success";
+            jwtUtils.generateToken(user.getUsername());
         }
         return "authentication failed";
     }
