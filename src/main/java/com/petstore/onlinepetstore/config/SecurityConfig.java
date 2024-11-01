@@ -11,18 +11,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
-    public SecurityConfig(UserDetailsService userDetailsService){
+    private JwtFilter jwtFilter;
+    public SecurityConfig(UserDetailsService userDetailsService,JwtFilter jwtFilter){
         this.userDetailsService=userDetailsService;
+        this.jwtFilter=jwtFilter;
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,6 +34,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
     @Bean
